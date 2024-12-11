@@ -3,7 +3,7 @@ using Amazon.Runtime;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,23 @@ namespace portfolio.infrastructure;
 
 public class SecretsManagerHelper
 {
-    public static async Task<IConfigurationRoot> GetConfigurationFromPlainText()
+    public static async Task<IConfigurationRoot> GetConfiguration(IHostApplicationBuilder builder)
+    {
+        IConfigurationRoot configuration;
+        if (builder.Environment.IsDevelopment())
+            configuration = new ConfigurationBuilder()
+                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+                                .AddEnvironmentVariables()
+                                .Build() ?? throw new Exception("Configuration is null");
+        else
+            configuration = await GetConfigurationFromPlainText();
+
+        return configuration;
+    }
+
+    static async Task<IConfigurationRoot> GetConfigurationFromPlainText()
     {
         string region = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.AWS_REGION)
                             ?? throw new InvalidOperationException(Constants.EnvironmentVariables.AWS_REGION);

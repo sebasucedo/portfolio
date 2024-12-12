@@ -63,7 +63,11 @@ public class AlpacaGateway(HttpClient httpClient)
             var positions = dto.Select(p => new Position
             { 
                 Symbol = p.Symbol,
+                Exchange = p.Exchange,
+                AssetClass = p.AssetClass,
                 Quantity = Convert.ToDecimal(p.Qty),
+                Price = Convert.ToDecimal(p.CurrentPrice),
+                MarketValue = Convert.ToDecimal(p.MarketValue),
             });
 
             return positions;

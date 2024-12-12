@@ -74,7 +74,11 @@ public class IolGateway(HttpClient httpClient)
             var positions = portfolio.Activos.Select(x => new Position
             {
                 Symbol = x.Titulo.Simbolo,
+                Exchange = x.Titulo.Mercado,
+                AssetClass = x.Titulo.Tipo,
                 Quantity = x.Cantidad,
+                Price = x.UltimoPrecio,
+                MarketValue = x.Valorizado,
             }).ToList();
 
             return positions;

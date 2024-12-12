@@ -13,8 +13,8 @@ public static class Extensions
         services.AddHttpClient<AlpacaGateway>(provider =>
         {
             provider.BaseAddress = new Uri(config.Alpaca.BaseAddress);
-            provider.DefaultRequestHeaders.Add(Constants.Keys.ALPACA_KEY, config.Alpaca.Key);
-            provider.DefaultRequestHeaders.Add(Constants.Keys.ALPACA_SECRET, config.Alpaca.Secret);
+            provider.DefaultRequestHeaders.Add(infrastructure.Constants.Keys.ALPACA_KEY, config.Alpaca.Key);
+            provider.DefaultRequestHeaders.Add(infrastructure.Constants.Keys.ALPACA_SECRET, config.Alpaca.Secret);
         });
 
         services.AddBearerTokenHandler();

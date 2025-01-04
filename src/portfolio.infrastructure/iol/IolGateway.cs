@@ -11,17 +11,9 @@ using System.Threading.Tasks;
 
 namespace portfolio.infrastructure.iol;
 
-public class IolGateway(HttpClient httpClient, 
-                        IDistributedCache cache,
-                        IOptions<RedisConfig> redisConfig)
+public class IolGateway(HttpClient httpClient) : IIolGateway
 {
     private readonly HttpClient _httpClient = httpClient;
-    private readonly IDistributedCache _cache = cache;
-    private readonly DistributedCacheEntryOptions _cacheOptions = new()
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(redisConfig.Value.DefaultTtl)
-    };
-
     readonly JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<Ledger> GetLedger()
@@ -67,51 +59,11 @@ public class IolGateway(HttpClient httpClient,
         }
     }
 
-    const string PREFIX_CACHE_KEY = "/iol";
-    async Task<IEnumerable<Position>?> GetPositionsFromCache(string cacheKey)
-    {
-        cacheKey = PREFIX_CACHE_KEY + cacheKey;
-        try
-        {
-            var jsonData = await _cache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(jsonData))
-                return JsonSerializer.Deserialize<IEnumerable<Position>>(jsonData)!;
-        }
-        catch (RedisConnectionException ex)
-        {
-            Serilog.Log.Error(ex, "Error connection to Redis trying to get positions from cache");
-        }
-        catch (Exception ex)
-        {
-            Serilog.Log.Error(ex, "Error getting positions from cache");
-        }
-        return null;
-    }
-
-    async Task CachePositions(IEnumerable<Position> positions, string cacheKey)
-    {
-        cacheKey = PREFIX_CACHE_KEY + cacheKey;
-        try
-        {
-            var jsonData = JsonSerializer.Serialize(positions);
-
-            await _cache.SetStringAsync(cacheKey, jsonData, _cacheOptions);
-        }
-        catch (Exception ex)
-        {
-            Serilog.Log.Error(ex, "Error caching positions");
-        }
-    }
-
     public async Task<IEnumerable<Position>> GetPositions()
     {
         var endpoint = "/api/portafolio";
         try
         {
-            var fromCache = await GetPositionsFromCache(endpoint);
-            if (fromCache is not null)
-                return fromCache;
-
             var response = await _httpClient.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
@@ -137,8 +89,6 @@ public class IolGateway(HttpClient httpClient,
                 Price = x.UltimoPrecio,
                 MarketValue = x.Valorizado,
             }).ToList();
-
-            await CachePositions(positions, endpoint);
 
             return positions;
         }

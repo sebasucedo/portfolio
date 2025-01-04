@@ -23,7 +23,7 @@ public static class Extensions
         {
             client.BaseAddress = new Uri(config.BaseAddress);
         });
-        services.AddHttpClient<IolGateway>(client =>
+        services.AddHttpClient<IIolGateway, IolGateway>(client =>
         {
             client.BaseAddress = new Uri(config.BaseAddress);
         })

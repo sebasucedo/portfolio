@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace portfolio.infrastructure.alpaca;
 
-public class AlpacaGateway(HttpClient httpClient)
+public class AlpacaGateway(HttpClient httpClient) : IAlpacaGateway
 {
     private readonly HttpClient _httpClient = httpClient;
 

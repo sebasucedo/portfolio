@@ -46,8 +46,8 @@
                   const response = await fetch('https://api.portfolio.ucedo.io/positions');
                   if (!response.ok) 
                     throw new Error('Error retrieving data');
-                  const data = await response.json();
-                  this.positions = data.map(p => ({
+                  const json = await response.json();
+                  this.positions = json.data.map(p => ({
                     ...p,
                     quantity: parseFloat(p.quantity).toFixed(2),
                     price: parseFloat(p.price).toFixed(2),

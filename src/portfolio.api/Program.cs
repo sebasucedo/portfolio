@@ -2,6 +2,10 @@ using portfolio.api;
 using portfolio.infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+});
 
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
@@ -27,6 +31,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddServices(configuration);
 
 var app = builder.Build();
+
+app.UseMiddleware<ApiResponseExceptionMiddleware>();
 
 app.UseCors(portfolio.api.Constants.Policies.CorsPolicy);
 

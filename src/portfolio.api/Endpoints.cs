@@ -17,11 +17,13 @@ public static class Endpoints
 
         app.MapGet("/positions", async (AlpacaGateway alpacaGateway, IolGateway iolGateway) =>
         {
-            var alpacaPositions = await alpacaGateway.GetPositions();
+            var alpacaPositionsTask = alpacaGateway.GetPositions();
 
-            var iolPositions = await iolGateway.GetPositions();
+            var iolPositionsTask = iolGateway.GetPositions();
 
-            List<Position> positions = [.. alpacaPositions, .. iolPositions];
+            var result = await Task.WhenAll([alpacaPositionsTask, iolPositionsTask]);
+
+            var positions = result.SelectMany(x => x);
 
             return Results.Ok(positions);
         })

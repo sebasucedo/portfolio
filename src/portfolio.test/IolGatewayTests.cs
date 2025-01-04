@@ -1,5 +1,8 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
+using NSubstitute;
 using NUnit.Framework;
+using portfolio.infrastructure;
 using portfolio.infrastructure.iol;
 using portfolio.test.helpers;
 using System;
@@ -24,7 +27,21 @@ internal class IolGatewayTests
             BaseAddress = new Uri("http://localhost/")
         };
 
-        var gateway = new IolGateway(httpClient);
+        var redisConfigMock = new RedisConfig
+        {
+            InstanceName = "Test",
+            Host = "localhost",
+            Port = 6379,
+            User = "default",
+            Password = "password",
+            DefaultTtl = 3600
+        };
+        var redisOptionsMock = Substitute.For<IOptions<RedisConfig>>();
+        redisOptionsMock.Value.Returns(redisConfigMock);
+
+        var gateway = new IolGateway(httpClient, 
+                                     Substitute.For<IDistributedCache>(),
+                                     redisOptionsMock);
 
         var ledger = await gateway.GetLedger();
 

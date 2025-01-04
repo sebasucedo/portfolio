@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
+    <link rel="icon" href="data:," />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.x.x/dist/tailwind.min.css">
   </head>
@@ -16,6 +17,7 @@
                     <th class="p-2 border">Symbol</th>
                     <th class="p-2 border">Exchange</th>
                     <th class="p-2 border w-32">Quantity</th>
+                    <th class="p-2 border">Currency</th>
                     <th class="p-2 border w-32">Price</th>
                     <th class="p-2 border w-32">Market value</th>
                 </tr>
@@ -26,6 +28,7 @@
                         <td class="p-2 border" x-text="p.symbol"></td>
                         <td class="p-2 border" x-text="p.exchange"></td>
                         <td class="p-2 border text-right font-mono w-32" x-text="p.quantity"></td>
+                        <td class="p-2 border w-32" x-text="p.currency"></td>
                         <td class="p-2 border text-right font-mono w-32" x-text="p.price"></td>
                         <td class="p-2 border text-right font-mono w-32" x-text="p.marketValue"></td>
                     </tr>
@@ -39,20 +42,20 @@
             return {
               positions: [],
               async fetchData() {
-                  try {
-                      const response = await fetch('https://api.portfolio.ucedo.io/positions');
-                      if (!response.ok) 
-                        throw new Error('Error al obtener los datos');
-                        const data = await response.json();
-                      this.positions = data.map(p => ({
-                          ...p,
-                          quantity: parseFloat(p.quantity).toFixed(2),
-                          price: parseFloat(p.price).toFixed(2),
-                          marketValue: parseFloat(p.marketValue).toFixed(2),
-                      }));
-                  } catch (error) {
-                      console.error('Error al realizar el fetch:', error);
-                  }
+                try {
+                  const response = await fetch('https://api.portfolio.ucedo.io/positions');
+                  if (!response.ok) 
+                    throw new Error('Error retrieving data');
+                  const data = await response.json();
+                  this.positions = data.map(p => ({
+                    ...p,
+                    quantity: parseFloat(p.quantity).toFixed(2),
+                    price: parseFloat(p.price).toFixed(2),
+                    marketValue: parseFloat(p.marketValue).toFixed(2),
+                  }));
+                } catch (error) {
+                  console.error('Error performing the fetch:', error);
+                }
               }
             };
         }

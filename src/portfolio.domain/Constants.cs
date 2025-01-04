@@ -8,6 +8,11 @@ namespace portfolio.domain;
 
 public class Constants
 {
+    public static class DataSoruces
+    {
+        public const string ALPACA = "Alpaca";
+        public const string IOL = "Iol";
+    }
     public static class Currencies
     {
         public const string USD = "USD";

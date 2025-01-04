@@ -19,6 +19,7 @@ public static class Extensions
 
         services.AddBearerTokenHandler();
         services.AddIolHttpClient(config.Iol);
+        services.AddCache(config.Redis);
 
         return services;
     }

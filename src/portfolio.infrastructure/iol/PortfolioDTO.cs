@@ -25,4 +25,5 @@ internal class TituloDTO
     public required string Simbolo { get; set; }
     public required string Mercado { get; set; }
     public required string Tipo { get; set; }
+    public required string Moneda { get; set; }
 }

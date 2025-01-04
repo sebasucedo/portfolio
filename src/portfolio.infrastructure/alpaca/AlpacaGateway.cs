@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace portfolio.infrastructure.alpaca;
 
-public class AlpacaGateway(HttpClient httpClient)
+public class AlpacaGateway(HttpClient httpClient) : IAlpacaGateway
 {
     private readonly HttpClient _httpClient = httpClient;
 
@@ -62,10 +62,12 @@ public class AlpacaGateway(HttpClient httpClient)
 
             var positions = dto.Select(p => new Position
             { 
+                DataSource = domain.Constants.DataSoruces.ALPACA,
                 Symbol = p.Symbol,
                 Exchange = p.Exchange,
                 AssetClass = p.AssetClass,
                 Quantity = Convert.ToDecimal(p.Qty),
+                Currency = domain.Constants.Currencies.USD,
                 Price = Convert.ToDecimal(p.CurrentPrice),
                 MarketValue = Convert.ToDecimal(p.MarketValue),
             });

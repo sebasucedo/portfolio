@@ -1,4 +1,7 @@
-﻿using portfolio.domain;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
+using portfolio.domain;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +11,9 @@ using System.Threading.Tasks;
 
 namespace portfolio.infrastructure.iol;
 
-public class IolGateway(HttpClient httpClient)
+public class IolGateway(HttpClient httpClient) : IIolGateway
 {
     private readonly HttpClient _httpClient = httpClient;
-
     readonly JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<Ledger> GetLedger()
@@ -73,10 +75,17 @@ public class IolGateway(HttpClient httpClient)
 
             var positions = portfolio.Activos.Select(x => new Position
             {
+                DataSource = domain.Constants.DataSoruces.IOL,
                 Symbol = x.Titulo.Simbolo,
                 Exchange = x.Titulo.Mercado,
                 AssetClass = x.Titulo.Tipo,
                 Quantity = x.Cantidad,
+                Currency = x.Titulo.Moneda switch
+                {
+                    "dolar_Estadounidense" => domain.Constants.Currencies.USD,
+                    "peso_Argentino" => domain.Constants.Currencies.ARS,
+                    _ => string.Empty,
+                },
                 Price = x.UltimoPrecio,
                 MarketValue = x.Valorizado,
             }).ToList();

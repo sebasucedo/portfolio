@@ -1,6 +1,4 @@
 ﻿using portfolio.domain;
-using portfolio.infrastructure.alpaca;
-using portfolio.infrastructure.iol;
 
 namespace portfolio.api;
 
@@ -15,27 +13,31 @@ public static class Endpoints
         })
         .WithOpenApi();
 
-        app.MapGet("/positions", async (AlpacaGateway alpacaGateway, IolGateway iolGateway) =>
+        app.MapGet("/positions", async (Service service) =>
         {
-            var alpacaPositions = await alpacaGateway.GetPositions();
-
-            var iolPositions = await iolGateway.GetPositions();
-
-            List<Position> positions = [.. alpacaPositions, .. iolPositions];
-
-            return Results.Ok(positions);
+            var positions = await service.GetPositions();
+            var apiResponse = new ApiResponse<IEnumerable<Position>>
+            {
+                Success = true,
+                Data = positions,
+            };
+            return Results.Ok(apiResponse);
         })
         .WithOpenApi();
 
-        app.MapGet("/ledger", async (AlpacaGateway alpacaGateway, IolGateway iolGateway) =>
+        app.MapGet("/ledger", async (IAlpacaGateway alpacaGateway, IIolGateway iolGateway) =>
         {
             var alpacaLedger = await alpacaGateway.GetLedger();
 
             var iolLedger = await iolGateway.GetLedger();
 
             var ledgers = new List<Ledger> { alpacaLedger, iolLedger };
-
-            return Results.Ok(ledgers);
+            var apiResponse = new ApiResponse<List<Ledger>>
+            {
+                Success = true,
+                Data = ledgers,
+            };
+            return Results.Ok(apiResponse);
         })
         .WithOpenApi();
 

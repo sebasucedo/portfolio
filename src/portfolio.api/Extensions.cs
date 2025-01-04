@@ -1,4 +1,5 @@
-﻿using portfolio.infrastructure;
+﻿using portfolio.domain;
+using portfolio.infrastructure;
 using portfolio.infrastructure.alpaca;
 using portfolio.infrastructure.httpHandlers;
 
@@ -10,7 +11,7 @@ public static class Extensions
     {
         var config = configuration.Get();
 
-        services.AddHttpClient<AlpacaGateway>(provider =>
+        services.AddHttpClient<IAlpacaGateway, AlpacaGateway>(provider =>
         {
             provider.BaseAddress = new Uri(config.Alpaca.BaseAddress);
             provider.DefaultRequestHeaders.Add(infrastructure.Constants.Keys.ALPACA_KEY, config.Alpaca.Key);
@@ -19,6 +20,10 @@ public static class Extensions
 
         services.AddBearerTokenHandler();
         services.AddIolHttpClient(config.Iol);
+        services.AddCache(config.Redis);
+
+        services.AddTransient<ICacheInterceptor, CacheInterceptor>();
+        services.AddTransient<Service>();
 
         return services;
     }

@@ -2,4 +2,5 @@
 
 ## Diagram
 
-![portfolio drawio](https://github.com/user-attachments/assets/7ca1ef2a-0336-4bc8-a5a6-32096e7b371c)
+![portfolio drawio](https://github.com/user-attachments/assets/f8087033-723f-432f-a708-1503a1a269bc)
+

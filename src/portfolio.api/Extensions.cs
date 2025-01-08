@@ -20,6 +20,7 @@ public static class Extensions
 
         services.AddBearerTokenHandler();
         services.AddIolHttpClient(config.Iol);
+        services.AddPPiHttpClient(config.Ppi);
         services.AddCache(config.Redis);
 
         services.AddTransient<ICacheInterceptor, CacheInterceptor>();

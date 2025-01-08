@@ -1,0 +1,90 @@
+{
+  "groupedAvailability": [
+    {
+      "currency": "Pesos",
+      "availability": [
+        {
+          "name": "Pesos",
+          "symbol": "ARS",
+          "amount": 6366.02,
+          "settlement": "INMEDIATA"
+        },
+        {
+          "name": "Pesos",
+          "symbol": "ARS",
+          "amount": 0,
+          "settlement": "A-24HS"
+        },
+        {
+          "name": "Pesos",
+          "symbol": "ARS",
+          "amount": 0,
+          "settlement": "A-48HS"
+        }
+      ]
+    },
+    {
+      "currency": "Dolar Divisa | CCL",
+      "availability": [
+        {
+          "name": "Dolar Divisa | CCL",
+          "symbol": "USD",
+          "amount": 0,
+          "settlement": "INMEDIATA"
+        },
+        {
+          "name": "Dolar Divisa | CCL",
+          "symbol": "USD",
+          "amount": 0,
+          "settlement": "A-24HS"
+        },
+        {
+          "name": "Dolar Divisa | CCL",
+          "symbol": "USD",
+          "amount": 0,
+          "settlement": "A-48HS"
+        }
+      ]
+    },
+    {
+      "currency": "Dolar Billete | MEP",
+      "availability": [
+        {
+          "name": "Dolar Billete | MEP",
+          "symbol": "USD",
+          "amount": 0,
+          "settlement": "INMEDIATA"
+        },
+        {
+          "name": "Dolar Billete | MEP",
+          "symbol": "USD",
+          "amount": 0,
+          "settlement": "A-24HS"
+        },
+        {
+          "name": "Dolar Billete | MEP",
+          "symbol": "USD",
+          "amount": 0,
+          "settlement": "A-48HS"
+        }
+      ]
+    }
+  ],
+  "groupedInstruments": [
+    {
+      "name": "ACCIONES",
+      "instruments": [
+        {
+          "ticker": "COME",
+          "description": "Sociedad Comercial Del Plata",
+          "currency": "Pesos",
+          "price": 282,
+          "amount": 1974,
+          "quantity": 7,
+          "collateralQuantity": 0
+        }
+      ],
+      "groupedValue": 1974
+    }
+  ]
+}

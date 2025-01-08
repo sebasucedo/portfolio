@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
-using portfolio.domain;
-using StackExchange.Redis;
+﻿using portfolio.domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +24,7 @@ public class IolGateway(HttpClient httpClient) : IIolGateway
             var content = await response.Content.ReadAsStringAsync();
             var dto = JsonSerializer.Deserialize<LedgerDTO>(content, options);
 
-            var ledger = new Ledger { Name = "Iol" };
+            var ledger = new Ledger { Name = domain.Constants.DataSources.IOL };
             if (dto is not null)
             {
                 foreach (var cuenta in dto.Cuentas)
@@ -75,15 +72,16 @@ public class IolGateway(HttpClient httpClient) : IIolGateway
 
             var positions = portfolio.Activos.Select(x => new Position
             {
-                DataSource = domain.Constants.DataSoruces.IOL,
+                DataSource = domain.Constants.DataSources.IOL,
                 Symbol = x.Titulo.Simbolo,
                 Exchange = x.Titulo.Mercado,
                 AssetClass = x.Titulo.Tipo,
                 Quantity = x.Cantidad,
                 Currency = x.Titulo.Moneda switch
                 {
-                    "dolar_Estadounidense" => domain.Constants.Currencies.USD,
                     "peso_Argentino" => domain.Constants.Currencies.ARS,
+                    "dolar_Estadounidense" when x.Titulo.Mercado == "bcba" => domain.Constants.Currencies.MEP,
+                    "dolar_Estadounidense" => domain.Constants.Currencies.USD,
                     _ => string.Empty,
                 },
                 Price = x.UltimoPrecio,

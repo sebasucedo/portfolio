@@ -62,7 +62,7 @@ public class AlpacaGateway(HttpClient httpClient) : IAlpacaGateway
 
             var positions = dto.Select(p => new Position
             { 
-                DataSource = domain.Constants.DataSoruces.ALPACA,
+                DataSource = domain.Constants.DataSources.ALPACA,
                 Symbol = p.Symbol,
                 Exchange = p.Exchange,
                 AssetClass = p.AssetClass,

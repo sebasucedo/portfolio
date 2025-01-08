@@ -2,6 +2,7 @@
 using portfolio.domain;
 using portfolio.infrastructure.invertironline;
 using portfolio.infrastructure.iol;
+using portfolio.infrastructure.ppi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ public static class Extensions
             return key switch
             {
                 ProvidersConstants.IOL_API => serviceProvider.GetRequiredService<IolTokenService>(),
+                ProvidersConstants.PPI_API => serviceProvider.GetRequiredService<PpiTokenService>(),
                 _ => throw new KeyNotFoundException("The requested token service does not exist for the provided key."),
             };
         });

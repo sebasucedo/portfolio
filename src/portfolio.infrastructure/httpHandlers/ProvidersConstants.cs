@@ -9,5 +9,6 @@ namespace portfolio.infrastructure.httpHandlers;
 public static class ProvidersConstants
 {
     public const string IOL_API = "IolApi";
+    public const string PPI_API = "PpiApi";
 }
 

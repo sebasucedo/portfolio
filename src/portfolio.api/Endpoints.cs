@@ -1,4 +1,6 @@
-﻿using portfolio.domain;
+﻿using Microsoft.Extensions.Options;
+using portfolio.domain;
+using portfolio.infrastructure.ppi;
 
 namespace portfolio.api;
 
@@ -13,9 +15,10 @@ public static class Endpoints
         })
         .WithOpenApi();
 
-        app.MapGet("/positions", async (Service service) =>
+        app.MapGet("/positions", async (Service service, IOptions<PpiConfig> config) =>
         {
-            var positions = await service.GetPositions();
+            var ppiAccountNumber = config.Value.AccountNumber;
+            var positions = await service.GetPositions(ppiAccountNumber);
             var apiResponse = new ApiResponse<IEnumerable<Position>>
             {
                 Success = true,
@@ -25,13 +28,20 @@ public static class Endpoints
         })
         .WithOpenApi();
 
-        app.MapGet("/ledger", async (IAlpacaGateway alpacaGateway, IIolGateway iolGateway) =>
+        app.MapGet("/ledger", async (IAlpacaGateway alpacaGateway, 
+                                     IIolGateway iolGateway, 
+                                     IPpiGateway ppiGateway,
+                                     IOptions<PpiConfig> config) =>
         {
             var alpacaLedger = await alpacaGateway.GetLedger();
 
             var iolLedger = await iolGateway.GetLedger();
 
-            var ledgers = new List<Ledger> { alpacaLedger, iolLedger };
+            var ppiAccountNumber = config.Value.AccountNumber;
+            var ppiResult = await ppiGateway.GetBalancesAndPositions(ppiAccountNumber);
+            var ppiLedger = ppiResult.Item2;
+
+            var ledgers = new List<Ledger> { alpacaLedger, iolLedger, ppiLedger };
             var apiResponse = new ApiResponse<List<Ledger>>
             {
                 Success = true,

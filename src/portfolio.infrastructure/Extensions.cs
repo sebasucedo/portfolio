@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using portfolio.domain;
 using portfolio.infrastructure.httpHandlers;
 using portfolio.infrastructure.invertironline;
 using portfolio.infrastructure.iol;
+using portfolio.infrastructure.ppi;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,6 @@ public static class Extensions
 {
     public static IServiceCollection AddIolHttpClient(this IServiceCollection services, IolConfig config)
     {
-
         services.AddHttpClient<IolTokenService>(client =>
         {
             client.BaseAddress = new Uri(config.BaseAddress);
@@ -41,6 +40,35 @@ public static class Extensions
             iol.Username = config.Username;
             iol.Password = config.Password;
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddPPiHttpClient(this  IServiceCollection services, PpiConfig config)
+    {
+        services.AddHttpClient<PpiTokenService>(client =>
+        {
+            client.BaseAddress = new Uri(config.BaseAddress);
+            client.DefaultRequestHeaders.Add("AuthorizedClient", config.AuthorizedClient);
+            client.DefaultRequestHeaders.Add("ClientKey", config.ClientKey);
+            client.DefaultRequestHeaders.Add("ApiKey", config.ApiKey);
+            client.DefaultRequestHeaders.Add("ApiSecret", config.ApiSecret);
+        });
+        services.AddHttpClient<IPpiGateway, PpiGateway>(client =>
+        {
+            client.BaseAddress = new Uri(config.BaseAddress);
+            client.DefaultRequestHeaders.Add("AuthorizedClient", config.AuthorizedClient);
+            client.DefaultRequestHeaders.Add("ClientKey", config.ClientKey);
+        })
+        .AddHttpMessageHandler(provider =>
+        {
+            var handler = new BearerTokenHandler(provider.GetRequiredService<Func<string, ITokenService>>())
+            {
+                Key = ProvidersConstants.PPI_API
+            };
+            return handler;
+        });
+        services.AddSingleton(Options.Create(config));
 
         return services;
     }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using portfolio.domain;
 using portfolio.infrastructure.invertironline;
-using portfolio.infrastructure.iol;
 using portfolio.infrastructure.ppi;
 using System;
 using System.Collections.Generic;

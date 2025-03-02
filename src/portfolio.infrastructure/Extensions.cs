@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using portfolio.domain;
+using portfolio.infrastructure.cache;
 using portfolio.infrastructure.httpHandlers;
 using portfolio.infrastructure.invertironline;
 using portfolio.infrastructure.iol;
@@ -14,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace portfolio.infrastructure;
 
-public static class Extensions
+public static partial class Extensions
 {
     public static IServiceCollection AddIolHttpClient(this IServiceCollection services, IolConfig config)
     {
@@ -44,7 +46,7 @@ public static class Extensions
         return services;
     }
 
-    public static IServiceCollection AddPPiHttpClient(this  IServiceCollection services, PpiConfig config)
+    public static IServiceCollection AddPPiHttpClient(this IServiceCollection services, PpiConfig config)
     {
         services.AddHttpClient<PpiTokenService>(client =>
         {
@@ -83,13 +85,23 @@ public static class Extensions
             User = redisConfig.User,
             Password = redisConfig.Password,
         };
-        IConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(configurationOptions);
 
-        services.AddStackExchangeRedisCache(options =>
+        try
         {
-            options.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer);
-            options.InstanceName = redisConfig.InstanceName;
-        });
+            IConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(configurationOptions);
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer);
+                options.InstanceName = redisConfig.InstanceName;
+            });
+
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error setting Redis");
+            services.AddTransient<IDistributedCache, NoOpDistributedCache>();
+        }
 
         return services;
     }

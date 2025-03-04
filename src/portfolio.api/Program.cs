@@ -11,7 +11,7 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
 IConfigurationRoot configuration = await SecretsManagerHelper.GetConfiguration(builder);
 
-var allowedDomains = configuration.GetSection("AllowedDomains").Get<string[]>() ?? [];
+var allowedDomains = configuration.GetSection(portfolio.api.Constants.Config.AllowedDomains).Get<string[]>() ?? [];
 
 builder.Services.AddCors(item =>
 {

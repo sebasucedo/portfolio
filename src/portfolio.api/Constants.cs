@@ -6,4 +6,9 @@ public class Constants
     {
         public const string CorsPolicy = "CORSPolicy";
     }
+
+    public static class Config
+    {
+        public const string AllowedDomains = "AllowedDomains";
+    }
 }
